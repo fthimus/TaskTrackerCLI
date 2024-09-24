@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TaskTrackerCLI
 {
     internal class TaskData
     {
-        internal string taskId { get; set; }
-        internal string description { get; set; }
-        internal DateTime createdAt { get; set; }
-        internal DateTime updatedAt { get; set; }
+        public int taskId { get; set; }
+        public string description { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime updatedAt { get; set; }
     }
 }
