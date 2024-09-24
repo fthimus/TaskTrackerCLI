@@ -2,7 +2,7 @@
   "profiles": {
     "TaskTrackerCLI": {
       "commandName": "Project",
-      "commandLineArgs": "add asdf"
+      "commandLineArgs": "list done"
     }
   }
 }
