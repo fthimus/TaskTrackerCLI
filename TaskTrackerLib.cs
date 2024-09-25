@@ -33,7 +33,7 @@ namespace TaskTrackerCLI
                     ListTask(args);
                     break;
                 case UPDATE:
-                    //AddTask();
+                    UpdateTask(args);
                     break;
                 case DELETE:
                     //AddTask();
@@ -70,9 +70,9 @@ namespace TaskTrackerCLI
 
         internal static int AppendTaskToFile(string[] args, string path)
         {
-            List<TaskData> tasks = ReadTasksFromFile(path);
-            int taskIdToCreate = tasks.Count > 0 ? tasks[tasks.Count - 1].taskId + 1 : 1;
-            tasks.Add(new TaskData()
+            List<TaskData>? tasks = ReadTasksFromFile(path);
+            int taskIdToCreate = tasks?.Count > 0 ? tasks[tasks.Count - 1].taskId + 1 : 1;
+            tasks?.Add(new TaskData()
             {
                 taskId = taskIdToCreate,
                 description = args[1],
@@ -86,7 +86,7 @@ namespace TaskTrackerCLI
             return taskIdToCreate;
         }
 
-        internal static List<TaskData> ReadTasksFromFile(string path)
+        internal static List<TaskData>? ReadTasksFromFile(string path)
         {
             string tasksJsonString = File.ReadAllText(path);
             return JsonSerializer.Deserialize<List<TaskData>>(tasksJsonString);
@@ -111,7 +111,13 @@ namespace TaskTrackerCLI
                 return;
             }
 
-            List<TaskData> tasks = ReadTasksFromFile(FILE_PATH);
+            List<TaskData>? tasks = ReadTasksFromFile(FILE_PATH);
+
+            if (tasks == null || tasks.Count == 0)
+            {
+                Console.WriteLine("No task exist.");
+                return;
+            }
 
             foreach (TaskData task in tasks)
             {
@@ -119,6 +125,40 @@ namespace TaskTrackerCLI
                     continue;
                 Console.WriteLine($"ID: {task.taskId}, Description: {task.description}, Status: {task.status}");
             }
+        }
+
+        internal static void UpdateTask(string[] args)
+        {
+            if (args.Length != 3)
+            {
+                ShowUsage();
+                return;
+            }
+
+            int idToUpdate = -1;
+            try
+            {
+                idToUpdate = Convert.ToInt32(args[1]);
+            }
+            catch (Exception ex)
+            {
+                ShowUsage();
+                return;
+            }
+
+            List<TaskData>? tasks = ReadTasksFromFile(FILE_PATH);
+
+            TaskData? taskToUpdate = tasks?.FirstOrDefault(x => x.taskId == idToUpdate);
+
+            if (taskToUpdate == null)
+            {
+                Console.WriteLine($"Task ID {idToUpdate} not found.");
+                return;
+            }
+
+            taskToUpdate.description = args[2];
+
+            File.WriteAllText(FILE_PATH, JsonSerializer.Serialize(tasks));
         }
     }
 }
