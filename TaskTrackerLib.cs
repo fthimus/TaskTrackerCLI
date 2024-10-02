@@ -15,6 +15,8 @@ namespace TaskTrackerCLI
         const string LIST = "LIST";
         const string UPDATE = "UPDATE";
         const string DELETE = "DELETE";
+        const string MARK_IN_PROGRESS = "MARK-IN-PROGRESS";
+        const string MARK_DONE = "MARK-DONE";
 
         const string STATUS_TODO = "todo";
         const string STATUS_IN_PROGRESS = "in-progress";
@@ -37,6 +39,12 @@ namespace TaskTrackerCLI
                     break;
                 case DELETE:
                     DeleteTask(args);
+                    break;
+                case MARK_IN_PROGRESS:
+                    MarkTask(args, STATUS_IN_PROGRESS);
+                    break;
+                case MARK_DONE:
+                    MarkTask(args, STATUS_DONE);
                     break;
                 default:
                     ShowUsage();
@@ -191,6 +199,41 @@ namespace TaskTrackerCLI
             }
 
             tasks.Remove(taskToDelete);
+
+            File.WriteAllText(FILE_PATH, JsonSerializer.Serialize(tasks));
+        }
+
+        internal static void MarkTask(string[] args, string markStatus)
+        {
+            if (args.Length != 2)
+            {
+                ShowUsage();
+                return;
+            }
+
+            int idToMark = -1;
+            try
+            {
+                idToMark = Convert.ToInt32(args[1]);
+            }
+            catch (Exception ex)
+            {
+                ShowUsage();
+                return;
+            }
+
+
+            List<TaskData>? tasks = ReadTasksFromFile(FILE_PATH);
+
+            TaskData? taskToMark = tasks?.FirstOrDefault(x => x.taskId == idToMark);
+
+            if (taskToMark == null)
+            {
+                Console.WriteLine($"Task ID {idToMark} not found.");
+                return;
+            }
+
+            taskToMark.status = markStatus;
 
             File.WriteAllText(FILE_PATH, JsonSerializer.Serialize(tasks));
         }
