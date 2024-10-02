@@ -36,7 +36,7 @@ namespace TaskTrackerCLI
                     UpdateTask(args);
                     break;
                 case DELETE:
-                    //AddTask();
+                    DeleteTask(args);
                     break;
                 default:
                     ShowUsage();
@@ -157,6 +157,40 @@ namespace TaskTrackerCLI
             }
 
             taskToUpdate.description = args[2];
+
+            File.WriteAllText(FILE_PATH, JsonSerializer.Serialize(tasks));
+        }
+
+        internal static void DeleteTask(string[] args)
+        {
+            if (args.Length != 2)
+            {
+                ShowUsage();
+                return;
+            }
+
+            int idToDelete = -1;
+            try
+            {
+                idToDelete = Convert.ToInt32(args[1]);
+            }
+            catch (Exception ex)
+            {
+                ShowUsage();
+                return;
+            }
+
+            List<TaskData>? tasks = ReadTasksFromFile(FILE_PATH);
+
+            TaskData? taskToDelete = tasks?.FirstOrDefault(x => x.taskId == idToDelete);
+
+            if (taskToDelete == null)
+            {
+                Console.WriteLine($"Task ID {idToDelete} not found.");
+                return;
+            }
+
+            tasks.Remove(taskToDelete);
 
             File.WriteAllText(FILE_PATH, JsonSerializer.Serialize(tasks));
         }
