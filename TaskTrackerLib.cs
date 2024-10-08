@@ -60,7 +60,17 @@ namespace TaskTrackerCLI
 
         internal static void ShowUsage()
         {
-            Console.WriteLine("Show usage.");
+            string alignmentComponent = "{0,-50} {1,5}";
+            Console.WriteLine("Usage:");
+            Console.WriteLine(alignmentComponent, "task-cli add <task description>", "Adding a new task");
+            Console.WriteLine(alignmentComponent, "task-cli update <task id> <task description>", "Updating a task");
+            Console.WriteLine(alignmentComponent, "task-cli delete <task id>", "Deleting a task");
+            Console.WriteLine(alignmentComponent, "task-cli mark-in-progress <task id>", "Marking a task as in progress");
+            Console.WriteLine(alignmentComponent, "task-cli mark-done <task id>", "Marking a task as done");
+            Console.WriteLine(alignmentComponent, "task-cli list", "Listing all tasks");
+            Console.WriteLine(alignmentComponent, "task-cli list done <task description>", "Listing done tasks");
+            Console.WriteLine(alignmentComponent, "task-cli list todo <task description>", "Listing todo tasks");
+            Console.WriteLine(alignmentComponent, "task-cli list in-progress <task description>", "Listing in progress tasks");
         }
 
         internal static void AddTask(string[] args)
